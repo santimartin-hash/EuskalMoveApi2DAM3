@@ -11,6 +11,7 @@ import java.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -72,6 +73,11 @@ public class IncidenciaService {
     // Cargar datos automáticamente al inicio de la aplicación
     @EventListener(ContextRefreshedEvent.class)
     public void cargarDatosAlInicio() {
+        cargarDatosDesdeApiExterna();
+    }
+    
+    @Scheduled(cron = "0 0 0 * * ?")
+    public void ejecutarIncidenciaService() {
         cargarDatosDesdeApiExterna();
     }
     

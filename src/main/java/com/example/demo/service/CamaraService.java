@@ -9,6 +9,7 @@ import com.example.demo.response.CamaraApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -50,11 +51,17 @@ public class CamaraService {
                 camaraRepositorio.save(camara);
             }
         }
+        
     }
 
     // Si queremos que los datos se carguen automáticamente cada vez que la aplicación arranca
     @EventListener(ContextRefreshedEvent.class)
     public void cargarDatosAlInicio() {
+        cargarDatosDesdeApiExterna();
+    }
+    
+    @Scheduled(cron = "0 0 0 * * ?")
+    public void ejecutarCamaraService() {
         cargarDatosDesdeApiExterna();
     }
 }

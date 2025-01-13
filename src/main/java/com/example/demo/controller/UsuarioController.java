@@ -2,6 +2,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.DTO.LoginDTO;
+import com.example.demo.DTO.LoginResponseDTO;
 import com.example.demo.DTO.UsuarioDTO;
 import com.example.demo.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,15 +88,20 @@ public class UsuarioController {
     }
 
     @Operation(summary = "Autenticar un usuario",
-               description = "Este endpoint permite autenticar un usuario con su email y contraseña.")
-    @PostMapping("/login")
-    public ResponseEntity<UsuarioDTO> login(
-            @Parameter(description = "Objeto Login con email y contraseña", required = true) @RequestBody LoginDTO loginDTO) {
-        UsuarioDTO usuarioDTO = usuarioService.authenticate(loginDTO.getEmail(), loginDTO.getContrasena());
-        if (usuarioDTO != null) {
-            return new ResponseEntity<>(usuarioDTO, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
-    }
+            description = "Este endpoint permite autenticar un usuario con su email y contraseña.")
+ @PostMapping("/login")
+ public ResponseEntity<LoginResponseDTO> login(
+         @Parameter(description = "Objeto Login con email y contraseña", required = true) @RequestBody LoginDTO loginDTO) {
+     UsuarioDTO usuarioDTO = usuarioService.authenticate(loginDTO.getEmail(), loginDTO.getContrasena());
+     if (usuarioDTO != null) {
+         LoginResponseDTO responseDTO = new LoginResponseDTO();
+         responseDTO.setEmail(usuarioDTO.getEmail());
+         responseDTO.setNombre(usuarioDTO.getNombre());
+         responseDTO.setAdmin(usuarioDTO.isAdmin());
+         responseDTO.setStatus("OK");
+         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+     } else {
+         return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+     }
+ }
 }
