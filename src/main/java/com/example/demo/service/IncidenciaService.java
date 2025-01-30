@@ -26,7 +26,7 @@ public class IncidenciaService {
 
     public void cargarDatosDesdeApiExterna() {
         // Eliminar todos los registros existentes en la base de datos
-        incidenciaRepositorio.deleteAllExceptWithNullIncidenceId();
+        incidenciaRepositorio.deleteAllWithNonEmptyIncidenceId();;
 
         // Deshabilitar la verificación de SSL si es necesario
         SSLUtils.disableSslVerification();

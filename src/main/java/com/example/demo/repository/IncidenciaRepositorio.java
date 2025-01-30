@@ -8,8 +8,10 @@ import org.springframework.transaction.annotation.Transactional;
 import com.example.demo.modelo.Incidencia;
 
 public interface IncidenciaRepositorio extends JpaRepository<Incidencia, Long> {
-	  @Modifying
-	    @Transactional
-	    @Query("DELETE FROM Incidencia i WHERE i.incidenceId IS NOT NULL")
-	    void deleteAllExceptWithNullIncidenceId();
+	@Modifying
+	@Transactional
+	@Query("DELETE FROM Incidencia i WHERE i.incidenceId IS NOT NULL AND i.incidenceId <> ''")
+	void deleteAllWithNonEmptyIncidenceId();
+
+
 }
