@@ -1,6 +1,8 @@
+
 package com.example.demo.service;
 
 import com.example.demo.modelo.Usuario;
+import com.example.demo.PasswordUtils;
 import com.example.demo.DTO.UsuarioDTO;
 import com.example.demo.repository.UsuarioRepositorio;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,9 +58,12 @@ public class UsuarioService {
 
     // Crear un Usuario
     public UsuarioDTO createUsuario(UsuarioDTO usuarioDTO) {
-        Usuario usuario = toEntity(usuarioDTO);
-        usuario = usuarioRepositorio.save(usuario);
-        return toDTO(usuario); // Devuelve el DTO después de ser guardado
+        // Hash the password before saving
+        String hashedPassword = PasswordUtils.hashPassword(usuarioDTO.getContrasena());
+        usuarioDTO.setContrasena(hashedPassword);
+        Usuario usuario = new Usuario(usuarioDTO);
+        usuarioRepositorio.save(usuario);
+        return new UsuarioDTO(usuario);
     }
 
     // Eliminar Usuario por ID
@@ -80,7 +85,7 @@ public class UsuarioService {
         }
         return usuarioDTOList;
     }
-    
+
     // Método para actualizar un usuario por ID
     public UsuarioDTO updateUsuario(Long id, UsuarioDTO usuarioDTO) {
         Optional<Usuario> optionalUsuario = usuarioRepositorio.findById(id);
@@ -96,11 +101,15 @@ public class UsuarioService {
             return null;
         }
     }
-    
-    public UsuarioDTO authenticate(String email, String contrasena) {
-        Usuario usuario = usuarioRepositorio.findByEmailAndContrasena(email, contrasena);
+
+    public UsuarioDTO authenticate(String email, String password) {
+        Usuario usuario = usuarioRepositorio.findByEmail(email);
         if (usuario != null) {
-            return new UsuarioDTO(usuario);
+            // Hash the input password and compare with stored hash
+            String hashedPassword = PasswordUtils.hashPassword(password);
+            if (hashedPassword.equals(usuario.getContrasena())) {
+                return new UsuarioDTO(usuario);
+            }
         }
         return null;
     }

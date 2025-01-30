@@ -4,6 +4,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+
+import com.example.demo.DTO.UsuarioDTO;
+
 import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -31,5 +34,11 @@ public class Usuario {
     @Column(nullable = false) // El rol no debe ser nulo
     private boolean Admin; // Puede ser "ADMIN", "USER", etc.
     
-    
+    public Usuario(UsuarioDTO usuarioDTO) {
+        this.id = usuarioDTO.getId();
+        this.email = usuarioDTO.getEmail();
+        this.nombre = usuarioDTO.getNombre();
+        this.contrasena = usuarioDTO.getContrasena();
+        this.Admin = usuarioDTO.isAdmin();
+    }
 }
