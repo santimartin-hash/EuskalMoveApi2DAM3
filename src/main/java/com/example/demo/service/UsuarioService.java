@@ -86,21 +86,32 @@ public class UsuarioService {
         return usuarioDTOList;
     }
 
-    // Método para actualizar un usuario por ID
-    public UsuarioDTO updateUsuario(Long id, UsuarioDTO usuarioDTO) {
-        Optional<Usuario> optionalUsuario = usuarioRepositorio.findById(id);
-        if (optionalUsuario.isPresent()) {
-            Usuario usuario = optionalUsuario.get();
-            usuario.setEmail(usuarioDTO.getEmail());
-            usuario.setNombre(usuarioDTO.getNombre());
-            usuario.setContrasena(usuarioDTO.getContrasena());
-            usuario.setAdmin(usuarioDTO.isAdmin());
-            usuarioRepositorio.save(usuario);
-            return toDTO(usuario);
-        } else {
-            return null;
-        }
-    }
+    // Actualizar Usuario
+	public UsuarioDTO updateUsuario(Long id, UsuarioDTO usuarioDTO) {
+	    Optional<Usuario> optionalUsuario = usuarioRepositorio.findById(id);
+	    if (optionalUsuario.isPresent()) {
+	        Usuario usuario = optionalUsuario.get();
+	        usuario.setEmail(usuarioDTO.getEmail());
+	        usuario.setNombre(usuarioDTO.getNombre());
+	
+	        
+	        if (!usuario.getContrasena().equals(usuarioDTO.getContrasena())) {
+	          
+	            String hashedPassword = PasswordUtils.hashPassword(usuarioDTO.getContrasena());
+	            usuario.setContrasena(hashedPassword);
+	        } else {
+	          
+	            usuario.setContrasena(usuarioDTO.getContrasena());
+	        }
+	
+	        usuario.setAdmin(usuarioDTO.isAdmin());
+	        usuarioRepositorio.save(usuario);
+	        return toDTO(usuario);
+	    } else {
+	        return null;
+	    }
+	}
+
 
     public UsuarioDTO authenticate(String email, String password) {
         Usuario usuario = usuarioRepositorio.findByEmail(email);
